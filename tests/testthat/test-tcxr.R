@@ -1,4 +1,5 @@
 library(tcxr)
+library(XML)
 library(testthat)
 
 # TCX test files
