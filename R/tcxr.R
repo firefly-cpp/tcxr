@@ -1,5 +1,4 @@
 library(XML)
-library(dplyr)
 
 #' Parse a TCX file and extract activity metrics
 #'
