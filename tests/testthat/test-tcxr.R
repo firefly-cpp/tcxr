@@ -1,3 +1,4 @@
+library(tcxr)
 library(testthat)
 
 # TCX test files
