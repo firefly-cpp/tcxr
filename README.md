@@ -1,8 +1,8 @@
-# tcxr
+# tcxr -- A parser for TCX files written in R
 
 ## Overview
 
-tcxr is an R package designed to parse Training Center XML (TCX) files and extract key activity metrics. This package helps analyze workout and training data from devices that export TCX format, providing insights such as total distance, duration, calories burned, altitude, and power values.
+tcxr is an R package designed to parse Training Center XML (TCX) files and extract key activity metrics. This package helps analyze workout and training data from devices that export TCX format, providing insights such as total distance, duration, calories burned, altitude, and power values. The Ruby package [tcxread](https://github.com/firefly-cpp/tcxread) was the inspiration for this R package.
 
 ## Installation
 
