@@ -2,10 +2,16 @@
 % Please edit documentation in R/tcxr.R
 \name{parse_lap}
 \alias{parse_lap}
-\title{Parse a lap from a TCX file}
+\title{Parse a Lap from a TCX File}
 \usage{
 parse_lap(lap)
 }
+\arguments{
+\item{lap}{An XML node representing a lap in a TCX file.}
+}
+\value{
+A dataframe containing the lap metrics.
+}
 \description{
-Parse a lap from a TCX file
+Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence.
 }

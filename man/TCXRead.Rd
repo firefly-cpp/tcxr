@@ -2,10 +2,16 @@
 % Please edit documentation in R/tcxr.R
 \name{TCXRead}
 \alias{TCXRead}
-\title{Parse a TCX file and extract activity metrics}
+\title{Read and Parse a TCX File}
 \usage{
 TCXRead(file_path)
 }
+\arguments{
+\item{file_path}{A character string specifying the path to the TCX file.}
+}
+\value{
+A list containing the computed activity metrics.
+}
 \description{
-Parse a TCX file and extract activity metrics
+Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence.
 }
