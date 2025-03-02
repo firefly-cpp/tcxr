@@ -6,12 +6,6 @@
 \usage{
 parse_trackpoint(trackpoint)
 }
-\arguments{
-\item{trackpoint}{An XML node representing a trackpoint.}
-}
-\value{
-A list containing the altitude, distance, heart rate, and power output at the trackpoint.
-}
 \description{
-This function extracts trackpoint details such as altitude, distance, heart rate, and power values.
+Parse a trackpoint from a TCX file
 }

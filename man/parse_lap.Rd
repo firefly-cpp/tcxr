@@ -6,12 +6,6 @@
 \usage{
 parse_lap(lap)
 }
-\arguments{
-\item{lap}{An XML node representing a lap.}
-}
-\value{
-A list containing the lap time, distance, calories burned, maximum altitude, and power values.
-}
 \description{
-This function extracts lap details including time, distance, calories, maximum altitude, and watts.
+Parse a lap from a TCX file
 }

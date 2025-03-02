@@ -6,14 +6,6 @@
 \usage{
 TCXRead(file_path)
 }
-\arguments{
-\item{file_path}{A string specifying the path to the TCX file.}
-}
-\value{
-A list containing the total distance in meters, total time in seconds,
-total calories burned, maximum altitude reached, maximum watts, and average watts.
-}
 \description{
-This function reads a TCX file and extracts key activity metrics including total distance,
-total time, calories burned, maximum altitude, and power values (watts).
+Parse a TCX file and extract activity metrics
 }
