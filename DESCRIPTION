@@ -10,6 +10,7 @@ Description: The tcxr package provides functions to parse Training Center XML (T
     maximum altitude, and power values (watts). This package is useful for analyzing workout
     and training data from devices that export TCX format.
 Depends: R (>= 3.5.0)
+License: MIT + file LICENSE
 Imports: XML
 Suggests: testthat
 License: GPL-3
