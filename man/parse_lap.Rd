@@ -13,5 +13,5 @@ parse_lap(lap)
 A dataframe containing the lap metrics.
 }
 \description{
-Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence.
+Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence, and heart rate.
 }

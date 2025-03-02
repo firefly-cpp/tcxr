@@ -2,7 +2,7 @@ library(XML)
 
 #' Read and Parse a TCX File
 #'
-#' Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence.
+#' Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, and heart rate.
 #'
 #' @param file_path A character string specifying the path to the TCX file.
 #' @return A list containing the computed activity metrics.
@@ -33,22 +33,25 @@ TCXRead <- function(file_path) {
   # Speed calculations
   valid_speeds <- activity_df$max_speed[is.finite(activity_df$max_speed)]
   max_speed <- ifelse(length(valid_speeds) > 0, max(valid_speeds, na.rm = TRUE), NA)
-
   average_speed <- ifelse(total_time_seconds > 0, (total_distance_meters / total_time_seconds) * 3.6, NA)
 
   # Watts calculations
   valid_watts <- activity_df$max_watts[is.finite(activity_df$max_watts)]
   max_watts <- ifelse(length(valid_watts) > 0, max(valid_watts, na.rm = TRUE), NA)
-
-  valid_avg_watts <- activity_df$average_watts[is.finite(activity_df$average_watts)]
+  valid_avg_watts <- unlist(lapply(activity_data, function(x) x$average_watts))
   average_watts <- ifelse(length(valid_avg_watts) > 0, mean(valid_avg_watts, na.rm = TRUE), NA)
 
   # Cadence calculations
   valid_cadence <- activity_df$max_cadence[is.finite(activity_df$max_cadence)]
   max_cadence <- ifelse(length(valid_cadence) > 0, max(valid_cadence, na.rm = TRUE), NA)
-
   valid_avg_cadence <- activity_df$average_cadence[is.finite(activity_df$average_cadence)]
   average_cadence <- ifelse(length(valid_avg_cadence) > 0, mean(valid_avg_cadence, na.rm = TRUE), NA)
+
+  # Heart Rate calculations
+  valid_heart_rates <- activity_df$max_hr[is.finite(activity_df$max_hr)]
+  max_hr <- ifelse(length(valid_heart_rates) > 0, max(valid_heart_rates, na.rm = TRUE), NA)
+  valid_avg_hr <- activity_df$average_hr[is.finite(activity_df$average_hr)]
+  average_hr <- ifelse(length(valid_avg_hr) > 0, mean(valid_avg_hr, na.rm = TRUE), NA)
 
   return(list(
     total_distance_meters = total_distance_meters,
@@ -62,13 +65,15 @@ TCXRead <- function(file_path) {
     max_watts = max_watts,
     average_watts = average_watts,
     max_cadence = max_cadence,
-    average_cadence = average_cadence
+    average_cadence = average_cadence,
+    max_hr = max_hr,
+    average_hr = average_hr
   ))
 }
 
 #' Parse a Lap from a TCX File
 #'
-#' Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence.
+#' Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence, and heart rate.
 #'
 #' @param lap An XML node representing a lap in a TCX file.
 #' @return A dataframe containing the lap metrics.
@@ -80,37 +85,18 @@ parse_lap <- function(lap) {
   distance_meters <- as.numeric(xmlValue(lap[["DistanceMeters"]]))
   calories <- as.numeric(xmlValue(lap[["Calories"]]))
 
-  # Altitude calculations
-  altitude_values <- as.numeric(unlist(sapply(track_data, `[[`, "altitude_meters")))
-  altitude_values <- altitude_values[!is.na(altitude_values)]
-
-  if (length(altitude_values) > 1) {
-    altitude_diff <- diff(altitude_values)
-    total_ascent <- sum(altitude_diff[altitude_diff > 0], na.rm = TRUE)
-    total_descent <- sum(-altitude_diff[altitude_diff < 0], na.rm = TRUE)
-  } else {
-    total_ascent <- NA
-    total_descent <- NA
-  }
+  altitude_values <- unlist(lapply(track_data, function(x) x$altitude_meters))
+  altitude_diff <- diff(altitude_values)
+  total_ascent <- sum(altitude_diff[altitude_diff > 0], na.rm = TRUE)
+  total_descent <- sum(-altitude_diff[altitude_diff < 0], na.rm = TRUE)
 
   max_altitude <- max(altitude_values, na.rm = TRUE)
-
-  # Speed calculations
-  speed_values <- as.numeric(unlist(sapply(track_data, `[[`, "speed_mps")))
-  speed_values <- speed_values[!is.na(speed_values)]
-
-  max_speed <- ifelse(length(speed_values) > 0, max(speed_values, na.rm = TRUE) * 3.6, NA)
-
-  # Watts and cadence calculations
-  watts_values <- as.numeric(unlist(sapply(track_data, `[[`, "watts")))
-  watts_values <- watts_values[is.finite(watts_values)]
-  max_watts <- ifelse(length(watts_values) > 0, max(watts_values, na.rm = TRUE), NA)
-  average_watts <- ifelse(length(watts_values) > 0, mean(watts_values, na.rm = TRUE), NA)
-
-  cadence_values <- as.numeric(unlist(sapply(track_data, `[[`, "cadence")))
-  cadence_values <- cadence_values[is.finite(cadence_values)]
-  max_cadence <- ifelse(length(cadence_values) > 0, max(cadence_values, na.rm = TRUE), NA)
-  average_cadence <- ifelse(length(cadence_values) > 0, mean(cadence_values, na.rm = TRUE), NA)
+  max_speed <- max(unlist(lapply(track_data, function(x) x$speed_mps)), na.rm = TRUE) * 3.6
+  max_watts <- max(unlist(lapply(track_data, function(x) x$watts)), na.rm = TRUE)
+  max_cadence <- max(unlist(lapply(track_data, function(x) x$cadence)), na.rm = TRUE)
+  average_cadence <- mean(unlist(lapply(track_data, function(x) x$cadence)), na.rm = TRUE)
+  max_hr <- max(unlist(lapply(track_data, function(x) x$heart_rate)), na.rm = TRUE)
+  average_hr <- mean(unlist(lapply(track_data, function(x) x$heart_rate)), na.rm = TRUE)
 
   return(data.frame(
     total_time_seconds = total_time_seconds,
@@ -121,9 +107,10 @@ parse_lap <- function(lap) {
     total_descent = total_descent,
     max_speed = max_speed,
     max_watts = max_watts,
-    average_watts = average_watts,
     max_cadence = max_cadence,
-    average_cadence = average_cadence
+    average_cadence = average_cadence,
+    max_hr = max_hr,
+    average_hr = average_hr
   ))
 }
 
@@ -135,16 +122,10 @@ parse_lap <- function(lap) {
 #' @return A list of parsed trackpoint metrics.
 parse_trackpoint <- function(trackpoint) {
   altitude_meters <- tryCatch(as.numeric(xmlValue(trackpoint[["AltitudeMeters"]])), error = function(e) NA)
-  distance_meters <- tryCatch(as.numeric(xmlValue(trackpoint[["DistanceMeters"]])), error = function(e) NA)
   speed_mps <- tryCatch(as.numeric(xmlValue(trackpoint[["Extensions"]][["TPX"]][["Speed"]])), error = function(e) NA)
   watts <- tryCatch(as.numeric(xmlValue(trackpoint[["Extensions"]][["TPX"]][["Watts"]])), error = function(e) NA)
   cadence <- tryCatch(as.numeric(xmlValue(trackpoint[["Cadence"]])), error = function(e) NA)
+  heart_rate <- tryCatch(as.numeric(xmlValue(trackpoint[["HeartRateBpm"]][["Value"]])), error = function(e) NA)
 
-  return(list(
-    altitude_meters = altitude_meters,
-    distance_meters = distance_meters,
-    speed_mps = speed_mps,
-    watts = watts,
-    cadence = cadence
-  ))
+  return(list(altitude_meters = altitude_meters, speed_mps = speed_mps, watts = watts, cadence = cadence, heart_rate = heart_rate))
 }

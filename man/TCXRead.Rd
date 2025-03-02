@@ -13,5 +13,5 @@ TCXRead(file_path)
 A list containing the computed activity metrics.
 }
 \description{
-Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence.
+Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, and heart rate.
 }
