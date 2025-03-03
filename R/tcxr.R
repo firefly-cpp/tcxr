@@ -2,10 +2,10 @@ library(XML)
 
 #' Read and Parse a TCX File
 #'
-#' Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, and heart rate.
+#' Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, heart rate, and activity type.
 #'
 #' @param file_path A character string specifying the path to the TCX file.
-#' @return A list containing the computed activity metrics.
+#' @return A list containing the computed activity metrics, including the activity type.
 #' @import XML
 #' @export
 TCXRead <- function(file_path) {
@@ -15,12 +15,22 @@ TCXRead <- function(file_path) {
   activities <- getNodeSet(root, "//ns:Activities/ns:Activity", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
 
   activity_data <- lapply(activities, function(activity) {
+    # Get the activity type (Sport) from the activity node
+    activity_type <- xmlGetAttr(activity, "Sport")
+
     laps <- getNodeSet(activity, "ns:Lap", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
     lap_data <- lapply(laps, parse_lap)
-    return(do.call(rbind, lap_data))
+
+    # Return the lap data along with activity type
+    return(list(activity_type = activity_type, lap_data = do.call(rbind, lap_data)))
   })
 
-  activity_df <- do.call(rbind, activity_data)
+  # Combine all activity data
+  all_activity_data <- lapply(activity_data, function(activity) {
+    cbind(activity$lap_data, activity_type = activity$activity_type)
+  })
+
+  activity_df <- do.call(rbind, all_activity_data)
 
   # Aggregate activity metrics
   total_time_seconds <- sum(activity_df$total_time_seconds, na.rm = TRUE)
@@ -53,6 +63,9 @@ TCXRead <- function(file_path) {
   valid_avg_hr <- activity_df$average_hr[is.finite(activity_df$average_hr)]
   average_hr <- ifelse(length(valid_avg_hr) > 0, mean(valid_avg_hr, na.rm = TRUE), NA)
 
+  # Extract unique activity types
+  activity_types <- unique(activity_df$activity_type)
+
   return(list(
     total_distance_meters = total_distance_meters,
     total_time_seconds = total_time_seconds,
@@ -67,7 +80,8 @@ TCXRead <- function(file_path) {
     max_cadence = max_cadence,
     average_cadence = average_cadence,
     max_hr = max_hr,
-    average_hr = average_hr
+    average_hr = average_hr,
+    activity_types = activity_types
   ))
 }
 

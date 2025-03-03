@@ -10,8 +10,8 @@ TCXRead(file_path)
 \item{file_path}{A character string specifying the path to the TCX file.}
 }
 \value{
-A list containing the computed activity metrics.
+A list containing the computed activity metrics, including the activity type.
 }
 \description{
-Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, and heart rate.
+Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, heart rate, and activity type.
 }
