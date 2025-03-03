@@ -1,23 +1,37 @@
-# tcxr -- A parser for TCX files written in R
+<h1 align="center">
+    tcxr
+</h1>
 
-## Overview
+<h2 align="center">
+    A parser for TCX files written in R
+</h2>
+
+<p align="center">
+    <a href="#-installation">📦 Installation</a> •
+    <a href="#-features">✨ Features</a> •
+    <a href="#-usage">🚀 Usage</a> •
+    <a href="#-datasets">💾 Datasets</a> •
+    <a href="#-further-read">📖 Further read</a> •
+    <a href="#-related-packagesframeworks">🔗 Related packages/frameworks</a> •
+    <a href="#-license">🔑 License</a>
+</p>
 
 tcxr is an R package designed to parse Training Center XML (TCX) files and extract key activity metrics. This package helps analyze workout and training data from devices that export TCX format, providing insights such as total distance, duration, calories burned, altitude, and power values. The Ruby package [tcxread](https://github.com/firefly-cpp/tcxread) was the inspiration for this R package.
 
-## Installation
+## 📦 Installation
 
 ```r
 # TODO
 ```
 
-## Features
+## ✨ Features
 
 - Parse TCX files to extract activity metrics
 - Compute total distance, duration, and calories burned
 - Analyze maximum altitude and power values
 - Works with TCX data exported from Garmin and similar devices
 
-## Usage
+## 🚀 Usage
 
 ### Load the package
 
@@ -37,6 +51,7 @@ result <- TCXRead(example_tcx_file)
 # Print the extracted data
 print(result)
 ```
+
 ## 💾 Datasets
 
 Datasets available and used in the examples on the following links: [DATASET1](http://iztok-jr-fister.eu/static/publications/Sport5.zip), [DATASET2](http://iztok-jr-fister.eu/static/css/datasets/Sport.zip), [DATASET3](https://github.com/firefly-cpp/tcx-test-files).
