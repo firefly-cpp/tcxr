@@ -7,6 +7,7 @@ library(XML)
 #' @param file_path A character string specifying the path to the TCX file.
 #' @return A list containing the computed activity metrics, including the activity type.
 #' @import XML
+#' @importFrom XML xmlTreeParse xmlRoot getNodeSet xmlGetAttr xmlValue
 #' @export
 TCXRead <- function(file_path) {
   doc <- xmlTreeParse(file_path, useInternalNodes = TRUE)
