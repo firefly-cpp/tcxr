@@ -93,25 +93,28 @@ TCXRead <- function(file_path) {
 #' @param lap An XML node representing a lap in a TCX file.
 #' @return A dataframe containing the lap metrics.
 parse_lap <- function(lap) {
-  trackpoints <- getNodeSet(lap, "ns:Track/ns:Trackpoint", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
+  trackpoints <- XML::getNodeSet(lap, "ns:Track/ns:Trackpoint", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
   track_data <- lapply(trackpoints, parse_trackpoint)
 
-  total_time_seconds <- as.numeric(xmlValue(lap[["TotalTimeSeconds"]]))
-  distance_meters <- as.numeric(xmlValue(lap[["DistanceMeters"]]))
-  calories <- as.numeric(xmlValue(lap[["Calories"]]))
+  total_time_seconds <- as.numeric(XML::xmlValue(lap[["TotalTimeSeconds"]]))
+  distance_meters <- as.numeric(XML::xmlValue(lap[["DistanceMeters"]]))
+  calories <- as.numeric(XML::xmlValue(lap[["Calories"]]))
 
   altitude_values <- unlist(lapply(track_data, function(x) x$altitude_meters))
-  altitude_diff <- diff(altitude_values)
-  total_ascent <- sum(altitude_diff[altitude_diff > 0], na.rm = TRUE)
-  total_descent <- sum(-altitude_diff[altitude_diff < 0], na.rm = TRUE)
+  altitude_diff <- diff(altitude_values, differences = 1)
+  total_ascent <- ifelse(length(altitude_diff) > 0, sum(altitude_diff[altitude_diff > 0], na.rm = TRUE), NA)
+  total_descent <- ifelse(length(altitude_diff) > 0, sum(-altitude_diff[altitude_diff < 0], na.rm = TRUE), NA)
 
-  max_altitude <- max(altitude_values, na.rm = TRUE)
-  max_speed <- max(unlist(lapply(track_data, function(x) x$speed_mps)), na.rm = TRUE) * 3.6
-  max_watts <- max(unlist(lapply(track_data, function(x) x$watts)), na.rm = TRUE)
-  max_cadence <- max(unlist(lapply(track_data, function(x) x$cadence)), na.rm = TRUE)
-  average_cadence <- mean(unlist(lapply(track_data, function(x) x$cadence)), na.rm = TRUE)
-  max_hr <- max(unlist(lapply(track_data, function(x) x$heart_rate)), na.rm = TRUE)
-  average_hr <- mean(unlist(lapply(track_data, function(x) x$heart_rate)), na.rm = TRUE)
+  # Ensure max() does not return -Inf
+  safe_max <- function(x) if (length(x) > 0 && any(!is.na(x))) max(x, na.rm = TRUE) else NA
+
+  max_altitude <- safe_max(altitude_values)
+  max_speed <- safe_max(unlist(lapply(track_data, function(x) x$speed_mps))) * 3.6
+  max_watts <- safe_max(unlist(lapply(track_data, function(x) x$watts)))
+  max_cadence <- safe_max(unlist(lapply(track_data, function(x) x$cadence)))
+  average_cadence <- ifelse(length(track_data) > 0, mean(unlist(lapply(track_data, function(x) x$cadence)), na.rm = TRUE), NA)
+  max_hr <- safe_max(unlist(lapply(track_data, function(x) x$heart_rate)))
+  average_hr <- ifelse(length(track_data) > 0, mean(unlist(lapply(track_data, function(x) x$heart_rate)), na.rm = TRUE), NA)
 
   return(data.frame(
     total_time_seconds = total_time_seconds,
@@ -129,6 +132,7 @@ parse_lap <- function(lap) {
   ))
 }
 
+
 #' Parse a Trackpoint from a TCX File
 #'
 #' Extracts data from a trackpoint, including altitude, distance, speed, power, cadence, and heart rate.
@@ -136,11 +140,18 @@ parse_lap <- function(lap) {
 #' @param trackpoint An XML node representing a trackpoint.
 #' @return A list of parsed trackpoint metrics.
 parse_trackpoint <- function(trackpoint) {
-  altitude_meters <- tryCatch(as.numeric(xmlValue(trackpoint[["AltitudeMeters"]])), error = function(e) NA)
-  speed_mps <- tryCatch(as.numeric(xmlValue(trackpoint[["Extensions"]][["TPX"]][["Speed"]])), error = function(e) NA)
-  watts <- tryCatch(as.numeric(xmlValue(trackpoint[["Extensions"]][["TPX"]][["Watts"]])), error = function(e) NA)
-  cadence <- tryCatch(as.numeric(xmlValue(trackpoint[["Cadence"]])), error = function(e) NA)
-  heart_rate <- tryCatch(as.numeric(xmlValue(trackpoint[["HeartRateBpm"]][["Value"]])), error = function(e) NA)
+  altitude_meters <- tryCatch(as.numeric(XML::xmlValue(trackpoint[["AltitudeMeters"]])), error = function(e) NA, warning = function(w) NA)
+  speed_mps <- tryCatch(as.numeric(XML::xmlValue(trackpoint[["Extensions"]][["TPX"]][["Speed"]])), error = function(e) NA, warning = function(w) NA)
+  watts <- tryCatch(as.numeric(XML::xmlValue(trackpoint[["Extensions"]][["TPX"]][["Watts"]])), error = function(e) NA, warning = function(w) NA)
+  cadence <- tryCatch(as.numeric(XML::xmlValue(trackpoint[["Cadence"]])), error = function(e) NA, warning = function(w) NA)
+  heart_rate <- tryCatch(as.numeric(XML::xmlValue(trackpoint[["HeartRateBpm"]][["Value"]])), error = function(e) NA, warning = function(w) NA)
 
-  return(list(altitude_meters = altitude_meters, speed_mps = speed_mps, watts = watts, cadence = cadence, heart_rate = heart_rate))
+  return(list(
+    altitude_meters = altitude_meters,
+    speed_mps = speed_mps,
+    watts = watts,
+    cadence = cadence,
+    heart_rate = heart_rate
+  ))
 }
+
