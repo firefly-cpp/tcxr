@@ -54,7 +54,7 @@ print(result)
 
 ## 💾 Datasets
 
-Datasets available and used in the examples on the following links: [DATASET1](http://iztok-jr-fister.eu/static/publications/Sport5.zip), [DATASET2](http://iztok-jr-fister.eu/static/css/datasets/Sport.zip), [DATASET3](https://github.com/firefly-cpp/tcx-test-files).
+Datasets available and used in the examples on the following links: [DATASET1](https://iztok-jr-fister.eu/static/publications/Sport5.zip), [DATASET2](https://iztok-jr-fister.eu/static/css/datasets/Sport.zip), [DATASET3](https://github.com/firefly-cpp/tcx-test-files).
 
 ## 📖 Further read
 
