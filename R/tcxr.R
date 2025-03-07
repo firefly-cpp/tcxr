@@ -6,20 +6,19 @@ library(XML)
 #'
 #' @param file_path A character string specifying the path to the TCX file.
 #' @return A list containing the computed activity metrics, including the activity type.
-#' @import XML
 #' @importFrom XML xmlTreeParse xmlRoot getNodeSet xmlGetAttr xmlValue
 #' @export
 TCXRead <- function(file_path) {
-  doc <- xmlTreeParse(file_path, useInternalNodes = TRUE)
-  root <- xmlRoot(doc)
+  doc <- XML::xmlTreeParse(file_path, useInternalNodes = TRUE)
+  root <- XML::xmlRoot(doc)
 
-  activities <- getNodeSet(root, "//ns:Activities/ns:Activity", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
+  activities <- XML::getNodeSet(root, "//ns:Activities/ns:Activity", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
 
   activity_data <- lapply(activities, function(activity) {
     # Get the activity type (Sport) from the activity node
-    activity_type <- xmlGetAttr(activity, "Sport")
+    activity_type <- XML::xmlGetAttr(activity, "Sport")
 
-    laps <- getNodeSet(activity, "ns:Lap", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
+    laps <- XML::getNodeSet(activity, "ns:Lap", namespaces = c(ns = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"))
     lap_data <- lapply(laps, parse_lap)
 
     # Return the lap data along with activity type
@@ -86,6 +85,7 @@ TCXRead <- function(file_path) {
   ))
 }
 
+
 #' Parse a Lap from a TCX File
 #'
 #' Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence, and heart rate.
@@ -131,7 +131,6 @@ parse_lap <- function(lap) {
     average_hr = average_hr
   ))
 }
-
 
 #' Parse a Trackpoint from a TCX File
 #'
