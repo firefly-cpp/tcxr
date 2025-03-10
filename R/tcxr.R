@@ -8,6 +8,47 @@ library(XML)
 #' @return A list containing the computed activity metrics, including the activity type.
 #' @importFrom XML xmlTreeParse xmlRoot getNodeSet xmlGetAttr xmlValue
 #' @export
+#' @examples
+#' # Example usage of TCXRead function
+#' # Note: Ensure you have a valid TCX file at the specified path before running.
+#'
+#' # Create a temporary TCX file for testing
+#' temp_tcx_file <- tempfile(fileext = ".tcx")
+#' cat('<?xml version="1.0" encoding="UTF-8"?>
+#' <TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2">
+#'   <Activities>
+#'     <Activity Sport="Running">
+#'       <Lap>
+#'         <TotalTimeSeconds>1800</TotalTimeSeconds>
+#'         <DistanceMeters>5000</DistanceMeters>
+#'         <Calories>400</Calories>
+#'         <Track>
+#'           <Trackpoint>
+#'             <AltitudeMeters>50</AltitudeMeters>
+#'             <Extensions>
+#'               <TPX>
+#'                 <Speed>2.78</Speed>
+#'                 <Watts>200</Watts>
+#'               </TPX>
+#'             </Extensions>
+#'             <Cadence>90</Cadence>
+#'             <HeartRateBpm>
+#'               <Value>150</Value>
+#'             </HeartRateBpm>
+#'           </Trackpoint>
+#'         </Track>
+#'       </Lap>
+#'     </Activity>
+#'   </Activities>
+#' </TrainingCenterDatabase>', file = temp_tcx_file)
+#'
+#' # Read the TCX file
+#' tcx_data <- TCXRead(temp_tcx_file)
+#'
+#' # Print the parsed activity data
+#' print(tcx_data)
+#'
+#' unlink(temp_tcx_file)
 TCXRead <- function(file_path) {
   doc <- XML::xmlTreeParse(file_path, useInternalNodes = TRUE)
   root <- XML::xmlRoot(doc)
