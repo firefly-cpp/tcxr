@@ -7,6 +7,21 @@
 </h2>
 
 <p align="center">
+  <a href="https://github.com/firefly-cpp/tcxr/actions?workflow=R-CMD-check">
+    <img alt="R build status" src="https://github.com/firefly-cpp/tcxr/workflows/R-CMD-check/badge.svg">
+  </a>
+  <a href="https://CRAN.R-project.org/package=tcxr">
+    <img alt="CRAN version" src="https://www.r-pkg.org/badges/version/tcxr">
+  </a>
+  <a href="https://cran.r-project.org/package=tcxr">
+    <img alt="CRAN downloads" src="https://cranlogs.r-pkg.org/badges/grand-total/tcxr?color=blue">
+  </a>
+  <a href="https://doi.org/10.32614/CRAN.package.tcxr">
+    <img alt="DOI" src="https://img.shields.io/badge/DOI-10.32614/CRAN.package.tcxr-blue">
+  </a>
+</p>
+
+<p align="center">
     <a href="#-installation">📦 Installation</a> •
     <a href="#-features">✨ Features</a> •
     <a href="#-usage">🚀 Usage</a> •
@@ -20,8 +35,11 @@ tcxr is an R package designed to parse Training Center XML (TCX) files and extra
 
 ## 📦 Installation
 
-```r
-# TODO
+
+Install CRAN release version:
+
+```R
+install.packages("tcxr")
 ```
 
 ## ✨ Features
