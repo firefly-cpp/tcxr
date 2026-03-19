@@ -61,13 +61,10 @@ library(tcxr)
 
 ```r
 # Provide the path to a TCX file
-example_tcx_file <- "example.tcx"
+tcx <- TCXRead("activity.tcx")
 
-# Parse the TCX file and extract metrics
-result <- TCXRead(example_tcx_file)
-
-# Print the extracted data
-print(result)
+tcx$summary      # aggregated activity metrics
+tcx$raw_data     # full trackpoint dataframe
 ```
 
 ## 💾 Datasets
