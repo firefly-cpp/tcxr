@@ -4,14 +4,25 @@
 \alias{parse_trackpoint}
 \title{Parse a Trackpoint from a TCX File}
 \usage{
-parse_trackpoint(trackpoint)
+parse_trackpoint(
+  trackpoint,
+  activity_id = NA_integer_,
+  lap_id = NA_integer_,
+  trackpoint_id = NA_integer_
+)
 }
 \arguments{
 \item{trackpoint}{An XML node representing a trackpoint.}
+
+\item{activity_id}{Integer activity index.}
+
+\item{lap_id}{Integer lap index.}
+
+\item{trackpoint_id}{Integer trackpoint index.}
 }
 \value{
-A list of parsed trackpoint metrics.
+A one-row dataframe of parsed trackpoint metrics.
 }
 \description{
-Extracts data from a trackpoint, including altitude, distance, speed, power, cadence, and heart rate.
+Extracts raw trackpoint fields into one dataframe row.
 }

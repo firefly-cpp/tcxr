@@ -4,14 +4,20 @@
 \alias{parse_lap}
 \title{Parse a Lap from a TCX File}
 \usage{
-parse_lap(lap)
+parse_lap(lap, activity_id = NA_integer_, lap_id = NA_integer_)
 }
 \arguments{
 \item{lap}{An XML node representing a lap in a TCX file.}
+
+\item{activity_id}{Integer activity index.}
+
+\item{lap_id}{Integer lap index within activity.}
 }
 \value{
-A dataframe containing the lap metrics.
+A list with:
+  - summary: dataframe containing lap summary
+  - raw: dataframe of lap trackpoints
 }
 \description{
-Extracts data from a lap within a TCX file, including time, distance, altitude, speed, power, cadence, and heart rate.
+Extracts summary data from a lap and also returns raw trackpoint data.
 }

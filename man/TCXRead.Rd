@@ -10,8 +10,51 @@ TCXRead(file_path)
 \item{file_path}{A character string specifying the path to the TCX file.}
 }
 \value{
-A list containing the computed activity metrics, including the activity type.
+A list with:
+  - summary: named list of aggregated metrics
+  - raw_data: dataframe of raw TCX trackpoints
 }
 \description{
-Parses a TCX file to extract key activity metrics such as speed, distance, time, altitude, power, cadence, heart rate, and activity type.
+Parses a TCX file and returns both:
+1. aggregated activity metrics
+2. raw trackpoint data as a dataframe
+}
+\examples{
+# Example usage
+temp_tcx_file <- tempfile(fileext = ".tcx")
+cat('<?xml version="1.0" encoding="UTF-8"?>
+<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2">
+  <Activities>
+    <Activity Sport="Running">
+      <Lap StartTime="2024-01-01T10:00:00Z">
+        <TotalTimeSeconds>1800</TotalTimeSeconds>
+        <DistanceMeters>5000</DistanceMeters>
+        <Calories>400</Calories>
+        <Track>
+          <Trackpoint>
+            <Time>2024-01-01T10:00:00Z</Time>
+            <DistanceMeters>0</DistanceMeters>
+            <AltitudeMeters>50</AltitudeMeters>
+            <Extensions>
+              <TPX>
+                <Speed>2.78</Speed>
+                <Watts>200</Watts>
+              </TPX>
+            </Extensions>
+            <Cadence>90</Cadence>
+            <HeartRateBpm>
+              <Value>150</Value>
+            </HeartRateBpm>
+          </Trackpoint>
+        </Track>
+      </Lap>
+    </Activity>
+  </Activities>
+</TrainingCenterDatabase>', file = temp_tcx_file)
+
+tcx_data <- TCXRead(temp_tcx_file)
+tcx_data$summary
+head(tcx_data$raw_data)
+
+unlink(temp_tcx_file)
 }
